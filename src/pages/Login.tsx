@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api/axios';
+import api from '../api/api';
 import { LogIn } from 'lucide-react';
+import AuthService from '../api/AuthService';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -12,11 +13,12 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await api.post('/auth/login', { username, password });
-      localStorage.setItem('token', response.data.token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+      const response = await AuthService.login(email, password);
+      localStorage.setItem('token', response?.data?.token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${response?.data?.token}`;
       navigate('/home');
     } catch (err) {
+      console.log(err, 'error')
       setError('Invalid credentials');
     }
   };
@@ -32,7 +34,7 @@ const Login: React.FC = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="username" className="sr-only">Username</label>
+              <label htmlFor="username" className="sr-only">Email</label>
               <input
                 id="username"
                 name="username"
@@ -40,8 +42,8 @@ const Login: React.FC = () => {
                 required
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>

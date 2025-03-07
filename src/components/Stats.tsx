@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
+import AuthService from '../api/AuthService';
 import { GameStats } from '../types';
 import { Trophy, X, Minus } from 'lucide-react';
 
@@ -9,7 +9,7 @@ const Stats: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await api.get('/stats');
+        const response = await AuthService.getStats();
         setStats(response.data);
       } catch (error) {
         console.error('Failed to fetch stats:', error);

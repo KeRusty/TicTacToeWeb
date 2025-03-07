@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api/axios';
+import api from '../api/api';
 
 const TicTacToe: React.FC = () => {
   const [board, setBoard] = useState<Array<string | null>>(Array(9).fill(null));
@@ -46,8 +46,8 @@ const TicTacToe: React.FC = () => {
   const status = winner
     ? `Winner: ${winner}`
     : board.every(square => square)
-    ? 'Draw!'
-    : `Next player: ${isXNext ? 'X' : 'O'}`;
+      ? 'Draw!'
+      : `Next player: ${isXNext ? 'X' : 'O'}`;
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));

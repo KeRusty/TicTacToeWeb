@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TowerControl as GameController, BarChart3 } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserDetails } from '../utils/redux/slice/user/selector';
+import AuthService from '../api/AuthService';
+import { startGameSession } from '../utils/redux/slice/game/slice';
 
 const Home: React.FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const userDetails = useSelector(getUserDetails);
+
+  const startNewGameSession = async () => {
+    try {
+      const startSession = await AuthService.createGameSession();
+      if (startSession) {
+        dispatch(startGameSession(startSession));
+      }
+    } catch (error) {
+      console.error('Register error', error);
+    }
+  };
+
+  useEffect(() => {
+    if (userDetails) {
+      startNewGameSession();
+    }
+  }, [userDetails]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

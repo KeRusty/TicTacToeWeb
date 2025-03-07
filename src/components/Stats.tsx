@@ -6,16 +6,16 @@ import { Trophy, X, Minus } from 'lucide-react';
 const Stats: React.FC = () => {
   const [stats, setStats] = useState<GameStats>({ wins: 0, losses: 0, draws: 0 });
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await AuthService.getStats();
-        setStats(response.data);
-      } catch (error) {
-        console.error('Failed to fetch stats:', error);
-      }
-    };
+  const fetchStats = async () => {
+    try {
+      const response = await AuthService.getStats();
+      setStats(response.stats);
+    } catch (error) {
+      console.error('Failed to fetch stats:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchStats();
   }, []);
 

@@ -3,8 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/api';
 import { LogIn } from 'lucide-react';
 import AuthService from '../api/AuthService';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../utils/redux/slice/user/userSlice';
 
 const Login: React.FC = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,9 +17,13 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       const response = await AuthService.login(email, password);
-      localStorage.setItem('token', response?.data?.token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${response?.data?.token}`;
-      navigate('/home');
+      console.log(response?.token, 'response')
+      if (response?.token) {
+        localStorage.setItem('token', response?.token);
+        api.defaults.headers.common['Authorization'] = `Bearer ${response?.token}`;
+        navigate('/home');
+        dispatch(setUserDetails(response));
+      }
     } catch (err) {
       console.log(err, 'error')
       setError('Invalid credentials');

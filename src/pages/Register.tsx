@@ -1,22 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api/api';
+import AuthService from '../api/AuthService';
 import { UserPlus } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../utils/redux/slice/user/userSlice';
 
 const Register: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await api.post('/auth/register', { username, password });
-      navigate('/login');
-    } catch (err) {
-      setError('Registration failed. Please try again.');
+    if (password === confirmPassword) {
+      try {
+        const response = await AuthService.register(email, password, name);
+        if (response?.token) {
+          localStorage.setItem('token', response?.token);
+          dispatch(registerUser(response));
+          navigate('/home');
+        }
+
+      } catch (err) {
+        setError('Registration failed. Please try again.');
+      }
     }
+
   };
 
   return (
@@ -30,18 +43,33 @@ const Register: React.FC = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="username" className="sr-only">Username</label>
+              <label htmlFor="email" className="sr-only">Email</label>
               <input
-                id="username"
-                name="username"
+                id="email"
+                name="email"
                 type="text"
                 required
                 className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
+            <div>
+              <label htmlFor="name" className="sr-only">Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Name"
+                value={email}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
             <div>
               <label htmlFor="password" className="sr-only">Password</label>
               <input
@@ -53,6 +81,20 @@ const Register: React.FC = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="confirmPassword"
+                required
+                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
           </div>
@@ -72,8 +114,8 @@ const Register: React.FC = () => {
             Sign in here
           </Link>
         </p>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

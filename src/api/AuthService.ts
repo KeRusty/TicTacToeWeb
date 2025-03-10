@@ -35,9 +35,9 @@ class AuthService {
         await localStorage.removeItem('token');
     }
 
-    async createGameSession(): Promise<RegisterLoginResponse> {
+    async createGameSession(startWithPlayer: boolean): Promise<StartWithPlayerResponse> {
         try {
-            const response = await api.post<RegisterLoginResponse>('/game/create_game_session', { startWithPlayer: true });
+            const response = await api.post<StartWithPlayerResponse>('/game/create_game_session', { startWithPlayer: startWithPlayer });
             return response.data;
         } catch (error: any) {
             throw error;

@@ -14,7 +14,7 @@ const Home: React.FC = () => {
 
   const startNewGameSession = async () => {
     try {
-      const startSession = await AuthService.createGameSession();
+      const startSession = await AuthService.createGameSession(true);
       if (startSession) {
         dispatch(startGameSession(startSession));
       }

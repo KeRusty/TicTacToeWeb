@@ -16,6 +16,11 @@ export type RegisterLoginResponse = {
     token: string;
 };
 
+export type StartWithPlayerResponse = {
+    startWithPlayer: boolean;
+};
+
+
 export type PlayMoveResponse = {
     board: any;
     sessionId: number;
